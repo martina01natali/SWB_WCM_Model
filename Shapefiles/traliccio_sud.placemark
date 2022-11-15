@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Placemarks>
+    <Placemark name="traliccio_sud">
+        <LABEL>traliccio_sud</LABEL>
+        <DESCRIPTION />
+        <LATITUDE>44.56759299997797</LATITUDE>
+        <LONGITUDE>11.529987000013518</LONGITUDE>
+        <PIXEL_X>174.33075387018033</PIXEL_X>
+        <PIXEL_Y>210.69873598720878</PIXEL_Y>
+        <STYLE_CSS>fill:#0000ff</STYLE_CSS>
+    </Placemark>
+</Placemarks>
