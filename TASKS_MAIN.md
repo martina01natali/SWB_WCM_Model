@@ -2,6 +2,8 @@
 
 ## General
 - [ ] temporal resolution of your data IN EVERY SINGLE CODE
+- [x] [biblio research] bounds for WCM with CR
+- [ ] orbit normalization (simple mean bias elimination)
 
 
 ## GEE
@@ -15,6 +17,8 @@
 - [ ]         [3] run with different vegetation indexes (try Cross Ratio)
 - [x] [1] check SM normalization
 - [ ]     [2] weighted mean SM in 3 hours around hour of passage of s-1
+- [ ]     [2] add plot input IRR, RAIN
+- [ ]     [2] plot RT1 over retrieved SM
 
 To run this code in a significant way, follow:
 - 1. check spatial mean: in linear or db scale? --> linear (check Reading_summaries)
@@ -39,3 +43,8 @@ To run this code in a significant way, follow:
 - [ ]     [2] implement montecarlo for finding best bounds (you will need to work with some fixed params) (not sure if this makes sense)
 - [ ]     [2] study options of optimizer: https://pyswarms.readthedocs.io/en/latest/examples/tutorials/options_handler.html 
 - [ ]     [2] study also: https://pyswarms.readthedocs.io/en/latest/examples/tutorials/custom_optimization_loop.html
+
+------------------------------------------------------------------------------
+# Questions
+
+- how do I normalize SM products from different satellites (always max-min norm?)
