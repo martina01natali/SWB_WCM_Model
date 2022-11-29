@@ -20,7 +20,6 @@
 - [x] [1] check SM normalization
 - [ ]     [2] weighted mean SM in 3 hours around hour of passage of s-1
 - [ ]     [2] add plot input IRR, RAIN
-- [ ]     [2] plot RT1 over retrieved SM
 
 To run this code in a significant way, follow:
 - 1. check spatial mean: in linear or db scale? --> linear (check Reading_summaries)
@@ -31,11 +30,12 @@ To run this code in a significant way, follow:
 - 3. normalize backscattering for acquisition geometry (angle) HOW??? options: cosine, **distribution bias elimination**
 
 ## IRR
-- [ ]     [2] implement calibration with hardcoded s_fc and s_w
+- [x]     [2] implement calibration with hardcoded s_fc and s_w
 - [x] [1] run with different satellite products (THEIA, RT1)
 - [ ]         [5] bridge gap in SM data by using as benchmark similar irrigation+rain event
 - [x] [1] work on normalization of SM from different sources
 - [x]     [2] compare retrieved SM with satellite measurements (scatterplots)
+- [x] [1] add BIAS function to statistical metrics in title of plot and also in aux functions
 
 ## Optimizer (PSO) performance check
 - [ ]     [2] produce plots of distribution of parameters over multiple runs, fit them
@@ -47,6 +47,7 @@ To run this code in a significant way, follow:
 
 ## Templates
 - [ ] [5] make it a class (at the end!)
+- [ ] statistics retrieval: function that produces a dict with R, RMSE, NS, KGE etc
 
 ------------------------------------------------------------------------------
 # Questions
