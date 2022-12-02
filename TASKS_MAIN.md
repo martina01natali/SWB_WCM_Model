@@ -6,11 +6,12 @@
 - [ ] temporal resolution of your data IN EVERY SINGLE CODE
 - [x] [biblio research] bounds for WCM with CR --> check Notion under Master Thesis/WCM
 - [x] orbit normalization (simple mean bias elimination) --> ref. Mladenova 2013, code: Sigma_norm
+- [ ] build database (.csv) of satellite SM products (to aggregate sources in a single place)
 
 
 ## GEE
-- [ ]     [2] implement S2 data download
-- [ ]     [2] routine for NDVI calculation
+- [x]     [2] implement S2 data download
+- [x]     [2] routine for NDVI calculation
 
 ## WCM
 - [x] [1] check input data (to solve divergence)
@@ -19,7 +20,7 @@
 - [x]         [3] run with different vegetation indexes (try Cross Ratio)
 - [x] [1] check SM normalization
 - [ ]     [2] weighted mean SM in 3 hours around hour of passage of s-1
-- [ ]     [2] add plot input IRR, RAIN
+- [x]     [2] add plot input IRR, RAIN
 
 To run this code in a significant way, follow:
 - 1. check spatial mean: in linear or db scale? --> linear (check Reading_summaries)
@@ -48,6 +49,8 @@ To run this code in a significant way, follow:
 ## Templates
 - [ ] [5] make it a class (at the end!)
 - [ ] statistics retrieval: function that produces a dict with R, RMSE, NS, KGE etc
+- [x] hist fitted with gaussian
+- [ ] fitting functions (gauss, skew gauss, others)
 
 ------------------------------------------------------------------------------
 # Questions
