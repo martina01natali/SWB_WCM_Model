@@ -14,6 +14,8 @@
 - [ ] Comparison with literature
 - [ ] Consider different vegetation indices (e.g. cr, Vegetation Water Content, LAI from S2 (see mail Domenico & TerraScope))
 - [ ] Do the analysis over a longer time period (2017-2020) and so collect precipitation, EPOT, irrigation and crop data for 2018 and 2019 in Budrio...TEST
+- [ ] check out fisher information
+- [ ] check out KGE definition
 
 ## Other products
 - [ ] Comparison THEIA, RT1 with OBSERVED and compare goodness with our model
