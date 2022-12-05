@@ -27,7 +27,7 @@
 - [x]     [2] implement S2 data download
 - [x]     [2] routine for NDVI calculation
 
-## WCM
+## WCM+IRRI
 - [x] [1] check input data (to solve divergence)
     - [x] [2] comparsion between different satellite products (vd IRRI_WCM)
 - [x] [1] backscattering normalization for different acquisition geom and angles: try both cos^2 and cdf normalization 
@@ -35,16 +35,6 @@
 - [x] [1] check SM normalization
 - [ ]     [2] weighted mean SM in 3 hours around hour of passage of s-1
 - [x]     [2] add plot input IRR, RAIN
-
-To run this code in a significant way, follow:
-- 1. check spatial mean: in linear or db scale? --> linear (check Reading_summaries)
-    More on spatial distribution of backscattering intensity:
-    https://developers.google.com/earth-engine/tutorials/community/detecting-changes-in-sentinel-1-imagery-pt-1
-- 2. check if one-line WCM (single equation, not more) is different from standard
-    --> it is, standard performs better but can present wider divergence
-- 3. normalize backscattering for acquisition geometry (angle) HOW??? options: cosine, **distribution bias elimination**
-
-## IRR
 - [x]     [2] implement calibration with hardcoded s_fc and s_w
 - [x] [1] run with different satellite products (THEIA, RT1)
 - [ ]         [5] bridge gap in SM data by using as benchmark similar irrigation+rain event
@@ -54,6 +44,13 @@ To run this code in a significant way, follow:
 - [ ] Check input soil moisture and solve scaling issue between observed and modeled
 - [ ] Running IRRmodel on hourly dataset and then calibrating 𝜎^0 on an hourly basis: this could give better results
 
+To run this code in a significant way, follow:
+- 1. check spatial mean: in linear or db scale? --> linear (check Reading_summaries)
+    More on spatial distribution of backscattering intensity:
+    https://developers.google.com/earth-engine/tutorials/community/detecting-changes-in-sentinel-1-imagery-pt-1
+- 2. check if one-line WCM (single equation, not more) is different from standard
+    --> it is, standard performs better but can present wider divergence
+- 3. normalize backscattering for acquisition geometry (angle) HOW??? options: cosine, **distribution bias elimination**
 
 
 ## Optimizer (PSO) performance check
