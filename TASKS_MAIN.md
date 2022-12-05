@@ -43,6 +43,7 @@
 - [x] [1] add BIAS function to statistical metrics in title of plot and also in aux functions
 - [ ] Check input soil moisture and solve scaling issue between observed and modeled
 - [ ] Running IRRmodel on hourly dataset and then calibrating 𝜎^0 on an hourly basis: this could give better results
+- [ ] update data on golden table (cut main golden 2014-22) on periods of study in 2017
 
 To run this code in a significant way, follow:
 - 1. check spatial mean: in linear or db scale? --> linear (check Reading_summaries)
