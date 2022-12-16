@@ -15,7 +15,7 @@
 - [ ] Consider different vegetation indices (e.g. cr, Vegetation Water Content, LAI from S2 (see mail Domenico & TerraScope))
 - [ ] Do the analysis over a longer time period (2017-2020) and so collect precipitation, EPOT, irrigation and crop data for 2018 and 2019 in Budrio...TEST
 - [ ] check out fisher information
-- [ ] check out KGE definition
+- [x] check out KGE definition
 
 ## Other products
 - [ ] Comparison THEIA, RT1 with OBSERVED and compare goodness with our model
@@ -26,6 +26,9 @@
 ## GEE
 - [x]     [2] implement S2 data download
 - [x]     [2] routine for NDVI calculation
+- [ ] implement automatic hist normalization on whole timeseries
+    - [ ] [2] implement cosine normalization
+- [ ] 
 
 ## WCM+IRRI
 - [x] [1] check input data (to solve divergence)
@@ -33,7 +36,6 @@
 - [x] [1] backscattering normalization for different acquisition geom and angles: try both cos^2 and cdf normalization 
 - [x]         [3] run with different vegetation indexes (try Cross Ratio)
 - [x] [1] check SM normalization
-- [ ]     [2] weighted mean SM in 3 hours around hour of passage of s-1
 - [x]     [2] add plot input IRR, RAIN
 - [x]     [2] implement calibration with hardcoded s_fc and s_w
 - [x] [1] run with different satellite products (THEIA, RT1)
@@ -41,9 +43,15 @@
 - [x] [1] work on normalization of SM from different sources
 - [x]     [2] compare retrieved SM with satellite measurements (scatterplots)
 - [x] [1] add BIAS function to statistical metrics in title of plot and also in aux functions
-- [ ] Check input soil moisture and solve scaling issue between observed and modeled
-- [ ] Running IRRmodel on hourly dataset and then calibrating 𝜎^0 on an hourly basis: this could give better results
-- [ ] update data on golden table (cut main golden 2014-22) on periods of study in 2017
+- [ ] [1] Check input soil moisture and solve scaling issue between observed and modeled
+- [ ]         [5] Running IRRmodel on hourly dataset and then calibrating 𝜎^0 on an hourly basis: this could give better results
+- [ ] [1] update data on golden table (cut main golden 2014-22) on periods of study in 2017
+- [ ] [1] check compatibility of crop-specific coefficients with literature - also making table of those coefficients could be useful to fix them
+- [ ]     [2] improve stability of calibration by fixing some parameters with literature values
+- [ ]     [2] compare ETO and EPOT data to see if there is any difference
+    - [ ]     [3] try run with ETO
+- [ ]         [3] implement dynamic Kc by using Kc as scaling factor for NDVI, that provides timeseries trend
+- [ ]         [5] add PET function in model (from temperature data)
 
 To run this code in a significant way, follow:
 - 1. check spatial mean: in linear or db scale? --> linear (check Reading_summaries)
@@ -52,6 +60,11 @@ To run this code in a significant way, follow:
 - 2. check if one-line WCM (single equation, not more) is different from standard
     --> it is, standard performs better but can present wider divergence
 - 3. normalize backscattering for acquisition geometry (angle) HOW??? options: cosine, **distribution bias elimination**
+
+## WATERSTEM w/ UniFi
+- [ ] review optical indexes from Luca's codes
+- [ ] review speckle codes (suggested repository, starred on github)
+- [ ] implement GEE normalization of sigma0 values (@ about 40°) and update code on shared repository
 
 
 ## Optimizer (PSO) performance check

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Placemarks>
+    <Placemark name="traliccio">
+        <LABEL>traliccio</LABEL>
+        <DESCRIPTION />
+        <LATITUDE>44.570289999977845</LATITUDE>
+        <LONGITUDE>11.532033000013572</LONGITUDE>
+        <PIXEL_X>177.6771711603971</PIXEL_X>
+        <PIXEL_Y>173.71118820700795</PIXEL_Y>
+    </Placemark>
+</Placemarks>

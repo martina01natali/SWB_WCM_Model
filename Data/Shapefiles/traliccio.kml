@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>traliccio.kml</name>
+	<Style id="s_ylw-pushpin">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<StyleMap id="m_ylw-pushpin">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#s_ylw-pushpin</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#s_ylw-pushpin_hl</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="s_ylw-pushpin_hl">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Placemark>
+		<name>traliccio</name>
+		<LookAt>
+			<gx:TimeStamp><when>2017-04-22</when>
+</gx:TimeStamp>
+			<gx:ViewerOptions>
+				<gx:option name="historicalimagery"></gx:option>
+				<gx:option enabled="0" name="sunlight"></gx:option>
+				<gx:option enabled="0" name="streetview"></gx:option>
+			</gx:ViewerOptions>
+			<longitude>11.53235923978207</longitude>
+			<latitude>44.57033089014777</latitude>
+			<altitude>0</altitude>
+			<heading>-0.0002062788147966511</heading>
+			<tilt>0</tilt>
+			<range>202.2019305037488</range>
+			<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+		</LookAt>
+		<styleUrl>#m_ylw-pushpin</styleUrl>
+		<Point>
+			<gx:drawOrder>1</gx:drawOrder>
+			<coordinates>11.53203252833677,44.57029045032852,0</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>
