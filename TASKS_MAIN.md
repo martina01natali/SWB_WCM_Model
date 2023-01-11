@@ -3,19 +3,21 @@
 [#] #=priority in linspace(0,5) (decreasing)
 
 ## General
+- [ ] automatic loading of aux functions and template plots
 - [ ] temporal resolution of your data IN EVERY SINGLE CODE
-- [x] [biblio research] bounds for WCM with CR --> check Notion under Master Thesis/WCM
-- [x] orbit normalization (simple mean bias elimination) --> ref. Mladenova 2013, code: Sigma_norm
 - [ ] build database (.csv) of satellite SM products (to aggregate sources in a single place)
-- [x] check data on IRRINET (ask Matteo): missing data in 2020, 2018 (possible to have only 2 irrigation events?), must check diario di campo with CER people
 - [ ] check data in diario di campo (ask Matteo, CER)
 - [ ] tillage periods? (ask Matteo, CER)
-- [x] extend period in sigma0 normalization (download all data from starting date of satellite up until now)
 - [ ] Comparison with literature
 - [ ] Consider different vegetation indices (e.g. cr, Vegetation Water Content, LAI from S2 (see mail Domenico & TerraScope))
 - [ ] Do the analysis over a longer time period (2017-2020) and so collect precipitation, EPOT, irrigation and crop data for 2018 and 2019 in Budrio...TEST
 - [ ] check out fisher information
 - [x] check out KGE definition
+- [x] [biblio research] bounds for WCM with CR --> check Notion under Master Thesis/WCM
+- [x] orbit normalization (simple mean bias elimination) --> ref. Mladenova 2013, code: Sigma_norm
+- [x] check data on IRRINET (ask Matteo): missing data in 2020, 2018 (possible to have only 2 irrigation events?), must check diario di campo with CER people
+- [x] extend period in sigma0 normalization (download all data from starting date of satellite up until now)
+
 
 ## Other products
 - [ ] Comparison THEIA, RT1 with OBSERVED and compare goodness with our model
@@ -24,25 +26,15 @@
 
 
 ## GEE
+- [x] implement automatic hist normalization on whole timeseries
 - [x]     [2] implement S2 data download
 - [x]     [2] routine for NDVI calculation
-- [ ] implement automatic hist normalization on whole timeseries
-    - [ ] [2] implement cosine normalization
-- [ ] 
+
 
 ## WCM+IRRI
-- [x] [1] check input data (to solve divergence)
-    - [x] [2] comparsion between different satellite products (vd IRRI_WCM)
-- [x] [1] backscattering normalization for different acquisition geom and angles: try both cos^2 and cdf normalization 
-- [x]         [3] run with different vegetation indexes (try Cross Ratio)
-- [x] [1] check SM normalization
-- [x]     [2] add plot input IRR, RAIN
-- [x]     [2] implement calibration with hardcoded s_fc and s_w
-- [x] [1] run with different satellite products (THEIA, RT1)
+- [ ] [1] check differences in different versions of code (v2, v3, v4), clean, merge
+- [ ] [1] create version v5 with dB fit of sigma^0_veg
 - [ ]         [5] bridge gap in SM data by using as benchmark similar irrigation+rain event
-- [x] [1] work on normalization of SM from different sources
-- [x]     [2] compare retrieved SM with satellite measurements (scatterplots)
-- [x] [1] add BIAS function to statistical metrics in title of plot and also in aux functions
 - [ ] [1] Check input soil moisture and solve scaling issue between observed and modeled
 - [ ]         [5] Running IRRmodel on hourly dataset and then calibrating 𝜎^0 on an hourly basis: this could give better results
 - [ ] [1] update data on golden table (cut main golden 2014-22) on periods of study in 2017
@@ -52,6 +44,17 @@
     - [ ]     [3] try run with ETO
 - [ ]         [3] implement dynamic Kc by using Kc as scaling factor for NDVI, that provides timeseries trend
 - [ ]         [5] add PET function in model (from temperature data)
+- [x] [1] check input data (to solve divergence)
+    - [x] [2] comparsion between different satellite products (vd IRRI_WCM)
+- [x] [1] backscattering normalization for different acquisition geom and angles: try both cos^2 and cdf normalization 
+- [x]         [3] run with different vegetation indexes (try Cross Ratio)
+- [x] [1] check SM normalization
+- [x]     [2] add plot input IRR, RAIN
+- [x]     [2] implement calibration with hardcoded s_fc and s_w
+- [x] [1] run with different satellite products (THEIA, RT1)
+- [x] [1] work on normalization of SM from different sources
+- [x]     [2] compare retrieved SM with satellite measurements (scatterplots)
+- [x] [1] add BIAS function to statistical metrics in title of plot and also in aux functions
 
 To run this code in a significant way, follow:
 - 1. check spatial mean: in linear or db scale? --> linear (check Reading_summaries)
@@ -65,11 +68,12 @@ To run this code in a significant way, follow:
 - [ ] review optical indexes from Luca's codes
 - [ ] review speckle codes (suggested repository, starred on github)
 - [ ] implement GEE normalization of sigma0 values (@ about 40°) and update code on shared repository
+- [ ] prepare overview of WATERSTEM inputs needed / output required (Google doc)
 
 
 ## Optimizer (PSO) performance check
 - [ ]     [2] produce plots of distribution of parameters over multiple runs, fit them
-- [ ]     [2] produce animation of particles' trajectories
+- [x]     [2] produce animation of particles' trajectories
 - [ ]     [2] implement montecarlo for finding best options for optimizer
 - [ ]     [2] implement montecarlo for finding best bounds (you will need to work with some fixed params) (not sure if this makes sense)
 - [ ]     [2] study options of optimizer: https://pyswarms.readthedocs.io/en/latest/examples/tutorials/options_handler.html 
@@ -91,3 +95,4 @@ To run this code in a significant way, follow:
 - Can we use the crop specific parameters in IRRmodel to build a vegetation descriptor and thus eliminate the need for external input?  should look at parameters timeseries (to begin with…)!
 - Check if daily aggregation of rain, irrigation (sum) over the whole 24 hours could affect 𝜎^0 calibration (we have 30% of total satellite points with rain in the same day and 5% with irrigation)
 - Model is VERY UNSTABLE in parameters calibration: why? Optimizer's fault? Few data?
+- Is cosine normalization of sigma0 really necessary of better than the statistical approach? Well, it depends. The truth is that backscattering VS angle of incidence over bare soil and vegetated surfaces has different trends: it scales with some power of cosine for rough surfaces, while it is almost flat for vegetated surfaces (Vreugdenhil, 2020). This means that the population of sigma0 values is described differently for different periods, which one may not know a priori. Hence, the best approach when treating surfaces that may be vegetated for some period of time is the statistical approach.
