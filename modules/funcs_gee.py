@@ -21,13 +21,6 @@ from scipy.optimize import curve_fit
 from numpy.polynomial import Polynomial
 from scipy.signal import savgol_filter as sfilter
 
-# Geospatial
-import fiona
-import xarray as xr
-import hydroeval as he
-# import geopandas as gpd
-# from maps_original import *
-
 # Graphics
 import seaborn as sns
 import matplotlib as mplt
@@ -119,55 +112,3 @@ def skew_gauss(x, A, mean, dev, alpha,):
     pdf = (1/(dev*np.sqrt(2*np.pi)))*np.exp(-pow((x-mean),2)/(2*pow(dev,2)))
     cdf = sp.erfc((-alpha*(x-mean))/(dev*np.sqrt(2)))
     return A*pdf*cdf
-
-
-#-----------------------------------------------------------------------------
-# GEE functions
-#-----------------------------------------------------------------------------
-
-def extract_data(image:ee.Image):
-    """Ausiliary function to extract data from an Image
-    
-    This function extracts spatial means and std.dev
-    via spatial reducers (reduceRegion).
-    Optimal implementation is to map this function
-    on a whole ImageCollection via .map() and insert the
-    return into a ee.FeatureCollection.
-    
-    Return
-    ------
-    ee.Feature
-    
-    """
-    try: # be aware that this try doesn't do anything
-        mean = image.reduceRegion(**{ 
-            'reducer': ee.Reducer.mean(),
-            'geometry': aoi,
-        })
-        
-        dev = image.reduceRegion(**{ 
-            'reducer': ee.Reducer.stdDev(),
-            'geometry': aoi,
-        })
-        
-        var = image.reduceRegion(**{
-            'reducer':ee.Reducer.variance(),
-            'geometry': aoi,
-        })
-    
-        properties = {
-            'Date': image.get('system:time_start'), # only way to get a timestr is an external operation
-            'Geometry': geometry_title,
-            'VV[lin]': mean.get('VV'),
-            'VH[lin]': mean.get('VH'),
-            'Angle[°]': mean.get('angle'),
-            'VV_var[lin]': var.get('VV'),
-            'VH_var[lin]': var.get('VH'),
-            'Orb': image.get('relativeOrbitNumber_start'),
-            'Pass': image.get('orbitProperties_pass'),
-        }
-    except (HttpError, EEException):
-        print(f'This image ({image.get("ID")}) had missing data. Skip...\n')
-            
-            
-    return ee.Feature(None, properties)
