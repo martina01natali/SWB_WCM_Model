@@ -7,6 +7,26 @@ import pandas as pd
 import datetime as dtt
 import hydroeval as he
 
+def lin_db(x):
+    """linear to dB"""
+    return 10*np.log10(x)
+
+
+def db_lin(x):
+    """dB to linear"""
+    return 10**(x/10)
+
+
+def timeseries(dates, data):
+    """Returns a matrix (list of type(dates,data)) in the format [dates,data]"""
+    
+    if len(dates)==len(data):
+        return [[dates[i],data[i]] for i in range(len(dates))]
+    else: raise ValueError(
+        f'dates and data must have same first dimension, but have shapes {np.shape(dates)} and {np.shape(data)}')
+    
+
+#----------------------------------------------------------------------------
 
 def IRR_WCM(PAR, inputs, user_in):
     """Irrigation model and WCM integration.

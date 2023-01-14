@@ -9,9 +9,7 @@ def hamon(tavg, jdate, lat, par=1.2):
     # ' @param lat latitude ()
     # ' @param jdate a day number of the year (julian day of the year)  timetj = df.index.day
     # ' @return outputs potential evapotranspiration (mm day-1)
-    # ' @details For details see Haith and Shoemaker (1987)
-
- 
+    # ' @details For details see Haith and Shoemaker (1987) 
 
     var_theta = 0.2163108 + 2 * np.arctan(0.9671396 * np.tan(0.0086 * (jdate - 186)))
     var_pi = np.arcsin(0.39795 * np.cos(var_theta))
