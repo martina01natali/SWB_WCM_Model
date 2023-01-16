@@ -2,6 +2,7 @@
 TEST_SITE*
 *.csv
 *.xlsx
+*Inputs\*
 
 
 # Byte-compiled / optimized / DLL files
