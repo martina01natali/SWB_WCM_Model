@@ -1,9 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "merged",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "Name": "Budrio_campo_right", "description": None, "tessellate": 1 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 11.533083525108189, 44.570697786985733 ], [ 11.532456431504921, 44.569896556005418 ], [ 11.53276321111148, 44.569791821233608 ], [ 11.53338591526418, 44.570601794304793 ], [ 11.533083525108189, 44.570697786985733 ] ] ] } },
-{ "type": "Feature", "properties": { "Name": "Budrio_campo_safe_half", "description": None, "tessellate": 1 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 11.53262979564736, 44.570842547510622 ], [ 11.532328100248961, 44.570445732016537 ], [ 11.53264162483709, 44.570339694294631 ], [ 11.532950828277439, 44.570738040751841 ], [ 11.53262979564736, 44.570842547510622 ] ] ] } }
-]
-}

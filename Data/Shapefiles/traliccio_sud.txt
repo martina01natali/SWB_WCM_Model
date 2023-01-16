@@ -1,7 +1,0 @@
-# SNAP pin export table
-#
-# Product:	Subset_S1A_IW_GRDH_1SDV_20170404T052705_20170404T052730_015990_01A5FE_01B8_NR_Cal_TC
-# Created on:	Wed May 19 11:23:12 CEST 2021
-
-Name	X	Y	Lon	Lat	Color	Label	Desc
-traliccio_sud	174.33075387018033	210.69873598720878	11.529987000013518	44.56759299997797	java.awt.Color[r=0,g=0,b=255]	traliccio_sud	

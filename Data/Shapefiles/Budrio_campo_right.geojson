@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "Budrio_campo_right",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "Name": "Budrio_campo_right", "description": null, "tessellate": 1 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 11.533083525108189, 44.570697786985733 ], [ 11.532456431504921, 44.569896556005418 ], [ 11.53276321111148, 44.569791821233608 ], [ 11.53338591526418, 44.570601794304793 ], [ 11.533083525108189, 44.570697786985733 ] ] ] } }
-]
-}

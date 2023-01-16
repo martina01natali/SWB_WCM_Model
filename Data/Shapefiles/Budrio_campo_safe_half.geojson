@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "Budrio_campo_safe_half",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "Name": "Budrio_campo_safe_half", "description": null, "tessellate": 1 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 11.53262979564736, 44.570842547510622 ], [ 11.532328100248961, 44.570445732016537 ], [ 11.53264162483709, 44.570339694294631 ], [ 11.532950828277439, 44.570738040751841 ], [ 11.53262979564736, 44.570842547510622 ] ] ] } }
-]
-}
