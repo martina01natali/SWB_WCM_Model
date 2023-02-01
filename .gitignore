@@ -1,5 +1,5 @@
 # Variety of files
-TEST_SITE*
+# TEST_SITE*
 *.csv
 *.xlsx
 *Inputs\*
