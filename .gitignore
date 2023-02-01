@@ -3,6 +3,7 @@
 # *.csv
 # *.xlsx
 # *Inputs\*
+./IRRI_WCM/Plot/Archive_gitignored/*
 
 
 # Byte-compiled / optimized / DLL files
