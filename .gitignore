@@ -1,7 +1,7 @@
 # Variety of files
 # TEST_SITE*
 # *.csv
-*.xlsx
+# *.xlsx
 *Inputs\*
 
 
