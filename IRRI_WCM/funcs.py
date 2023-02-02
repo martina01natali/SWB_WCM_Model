@@ -110,35 +110,62 @@ def timeseries(dates, data):
 # Data analysis, fit
 # Fitting functions
 
-
-def linear(x,a,b):
-    return a+b*x
-    
-
 def gauss(x, A, mean, dev):
     """Not-normalized, shifted gaussian distribution."""
-    
     import math
-    
-    pdf = (1/(dev*np.sqrt(2*math.pi)))*np.exp(-(x-mean)**2/(2*dev**2))
-    return A*pdf
+    return A*(1/(dev*np.sqrt(2*math.pi)))*np.exp(-(x-mean)**2/(2*dev**2))
 
+def skew_gauss(x, A, mean, dev, alpha):
+    """Skew, not-normalized and shifted gaussian distribution."""
 
-def skew_gauss(x, A, mean, dev, alpha,):
-    """Skew, not-normalized and shifted gaussian distribution.
-
-    References:
-    - https://www.wolframalpha.com/input?i=skew+gaussian+distribution
-    - https://stackoverflow.com/questions/15400850/scipy-optimize-curve-fit-unable-to-fit-shifted-skewed-gaussian-curve
-    - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skewnorm.html
-    """
-    
     import math
     import scipy.special as sp
     
     pdf = (1/(dev*np.sqrt(2*np.pi)))*np.exp(-pow((x-mean),2)/(2*pow(dev,2)))
     cdf = sp.erfc((-alpha*(x-mean))/(dev*np.sqrt(2)))
     return A*pdf*cdf
+
+def hist_gauss_fit(data, nbins, hist_kwargs, fitline_kwargs,
+                   title, density=False,
+                   opt_save=False, dir_name='', opt_name='hist_fit',
+                   func=gauss,
+                  ):
+    """Histogram with automatic gaussian fit.
+    
+    Arguments
+    ---------
+    - func: object, default gauss
+        WARNING: skew_gauss not supported yet    
+        
+    """
+
+    x = np.linspace(min(data), max(data), 200)
+    counts, bins, pads = plt.hist(data, bins=nbins, density=density, **hist_kwargs)
+    if func==gauss:
+        fit_bounds = [ [0,min(bins),0],
+                      [sum(counts)*np.diff(bins)[0],max(bins),abs(max(bins)-min(bins))] ]
+    elif func==skew_gauss:
+        fit_bounds = [ [0,min(bins),0],
+                      [sum(counts)*np.diff(bins)[0],max(bins),abs(max(bins)-min(bins))],
+                      # [-10, 10]
+                     ]
+    else: raise ValueError(f'Func {func} is not a valid option.')
+    popt, pcov = curve_fit(func, bins[:-1], counts, method='trf',bounds=fit_bounds, maxfev=1000)
+    fit = func(x, *popt)
+    plt.plot(x, fit, **fitline_kwargs)
+    ylabel = 'Density' if density else 'Counts'; plt.ylabel(ylabel)
+    plt.legend(loc='best'); plt.title(title)
+    xtext= 0.5*(plt.xlim()[1]-plt.xlim()[0])+plt.xlim()[0] # 0.8*(max(x)-min(x))+min(x);
+    ytext=0.5*max(counts) #0.5*(max(counts)-min(counts))+min(counts)
+    t = plt.text(xtext, ytext,
+                 f'tot counts={len(data)}\nmean={popt[1]:.2f}\ndev={popt[2]:.2f} ({popt[2]/abs(popt[1])*100:.1f}%)',
+                 ha="center", va="center", size=15,
+                 bbox=dict(boxstyle="round,pad=0.3", fc="tab:orange", ec="k", lw=2, alpha=.5))
+    
+    if opt_save: plt.savefig(dir_name+opt_name+'.png', dpi=300)
+    
+    return [counts, bins, pads, popt, pcov]
+
 
 #----------------------------------------------------------------------------
 # Ausiliary, file/dir management

@@ -4,7 +4,7 @@
 
 ## General
 - [ ] automatic loading of aux functions and template plots
-- [ ] temporal resolution of your data IN EVERY SINGLE CODE
+- [x] temporal resolution of your data IN EVERY SINGLE CODE
 - [ ] build database (.csv) of satellite SM products (to aggregate sources in a single place)
 - [ ] check data in diario di campo (ask Matteo, CER)
 - [ ] tillage periods? (ask Matteo, CER)
@@ -32,18 +32,18 @@
 
 
 ## WCM+IRRI
-- [ ] [1] check differences in different versions of code (v2, v3, v4), clean, merge
-- [ ] [1] create version v5 with dB fit of sigma^0_veg
+- [x] [1] check differences in different versions of code (v2, v3, v4), clean, merge
+- [x] [1] create version v5 with dB fit of sigma^0_veg
 - [ ]         [5] bridge gap in SM data by using as benchmark similar irrigation+rain event
-- [ ] [1] Check input soil moisture and solve scaling issue between observed and modeled
-- [ ]         [5] Running IRRmodel on hourly dataset and then calibrating 𝜎^0 on an hourly basis: this could give better results
-- [ ] [1] update data on golden table (cut main golden 2014-22) on periods of study in 2017
+- [x] [1] Check input soil moisture and solve scaling issue between observed and modeled
+- [x]         [5] Running IRRmodel on hourly dataset and then calibrating 𝜎^0 on an hourly basis: this could give better results
+- [x] [1] update data on golden table (cut main golden 2014-22) on periods of study in 2017
 - [ ] [1] check compatibility of crop-specific coefficients with literature - also making table of those coefficients could be useful to fix them
-- [ ]     [2] improve stability of calibration by fixing some parameters with literature values
-- [ ]     [2] compare ETO and EPOT data to see if there is any difference
-    - [ ]     [3] try run with ETO
-- [ ]         [3] implement dynamic Kc by using Kc as scaling factor for NDVI, that provides timeseries trend
-- [ ]         [5] add PET function in model (from temperature data)
+- [x]     [2] improve stability of calibration by fixing some parameters with literature values
+- [x]     [2] compare ETO and EPOT data to see if there is any difference
+- [ ]         [3] try run with ETO
+- [x]         [3] implement dynamic Kc by using Kc as scaling factor for NDVI, that provides timeseries trend
+- [x]         [5] add PET function in model (from temperature data)
 - [x] [1] check input data (to solve divergence)
     - [x] [2] comparsion between different satellite products (vd IRRI_WCM)
 - [x] [1] backscattering normalization for different acquisition geom and angles: try both cos^2 and cdf normalization 
@@ -67,12 +67,12 @@ To run this code in a significant way, follow:
 ## WATERSTEM w/ UniFi
 - [ ] review optical indexes from Luca's codes
 - [ ] review speckle codes (suggested repository, starred on github)
-- [ ] implement GEE normalization of sigma0 values (@ about 40°) and update code on shared repository
+- [x] implement GEE normalization of sigma0 values (@ about 40°) and update code on shared repository
 - [ ] prepare overview of WATERSTEM inputs needed / output required (Google doc)
 
 
 ## Optimizer (PSO) performance check
-- [ ]     [2] produce plots of distribution of parameters over multiple runs, fit them
+- [x]     [2] produce plots of distribution of parameters over multiple runs, fit them
 - [x]     [2] produce animation of particles' trajectories
 - [ ]     [2] implement montecarlo for finding best options for optimizer
 - [ ]     [2] implement montecarlo for finding best bounds (you will need to work with some fixed params) (not sure if this makes sense)
