@@ -86,17 +86,7 @@ def Rvalue(x:list,y:list)->float:
          if not (np.isnan(x[i])and(np.isnan(y[i]))) ] )
     return np.corrcoef(matrix,rowvar=False)[0][1]
 
-    
-def HIST_norm(ref_mean, ref_std, obs:list):
-    """HIST normalization
-    Ref. Mladenova, 2013, https://ieeexplore.ieee.org/document/6264094
-    
-    obs = [value, mean, std]
-    """
-    value, mean, std = obs
-    return ref_mean+ref_std/std*(value-mean)
 
-#----------------------------------------------------------------------------
 def timeseries(dates, data):
     """Returns a matrix (list of type(dates,data)) in the format [dates,data]"""
     
@@ -140,6 +130,55 @@ def skew_gauss(x, A, mean, dev, alpha,):
     cdf = sp.erfc((-alpha*(x-mean))/(dev*np.sqrt(2)))
     return A*pdf*cdf
 
-#----------------------------------------------------------------------------
-# Ausiliary, file/dir management
+    
+def HIST_norm(ref_mean, ref_std, obs:list):
+    """HIST normalization
+    Ref. Mladenova, 2013, https://ieeexplore.ieee.org/document/6264094
+    
+    obs = [value, mean, std]
+    """
+    value, mean, std = obs
+    return ref_mean+ref_std/std*(value-mean)
 
+
+#----------------------------------------------------------------------------
+def hist_gauss_fit(data, nbins, hist_kwargs, fitline_kwargs,
+                   title, density=False,
+                   opt_save=False, dir_name='', opt_name='hist_fit',
+                   func=gauss,
+                  ):
+    """Histogram with automatic gaussian fit.
+    
+    Arguments
+    ---------
+    - func: object, default gauss
+        WARNING: skew_gauss not supported yet    
+        
+    """
+
+    x = np.linspace(min(data), max(data), 200)
+    counts, bins, pads = plt.hist(data, bins=nbins, density=density, **hist_kwargs)
+    if func==gauss:
+        fit_bounds = [ [0,min(bins),0],
+                      [sum(counts)*np.diff(bins)[0],max(bins),abs(max(bins)-min(bins))] ]
+    elif func==skew_gauss:
+        fit_bounds = [ [0,min(bins),0],
+                      [sum(counts)*np.diff(bins)[0],max(bins),abs(max(bins)-min(bins))],
+                      # [-10, 10]
+                     ]
+    else: raise ValueError(f'Func {func} is not a valid option.')
+    popt, pcov = curve_fit(func, bins[:-1], counts, method='trf',bounds=fit_bounds, maxfev=1000)
+    fit = func(x, *popt)
+    plt.plot(x, fit, **fitline_kwargs)
+    ylabel = 'Density' if density else 'Counts'; plt.ylabel(ylabel)
+    plt.legend(loc='best'); plt.title(title)
+    xtext= 0.5*(plt.xlim()[1]-plt.xlim()[0])+plt.xlim()[0] # 0.8*(max(x)-min(x))+min(x);
+    ytext=0.5*max(counts) #0.5*(max(counts)-min(counts))+min(counts)
+    t = plt.text(xtext, ytext,
+                 f'tot counts={len(data)}\nmean={popt[1]:.2f}\ndev={popt[2]:.2f} ({popt[2]/abs(popt[1])*100:.1f}%)',
+                 ha="center", va="center", size=15,
+                 bbox=dict(boxstyle="round,pad=0.3", fc="tab:orange", ec="k", lw=2, alpha=.5))
+    
+    if opt_save: plt.savefig(dir_name+opt_name+'.png', dpi=300)
+    
+    return [counts, bins, pads, popt, pcov]

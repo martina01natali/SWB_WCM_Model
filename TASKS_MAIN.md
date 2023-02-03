@@ -3,6 +3,11 @@
 [#] #=priority in linspace(0,5) (decreasing)
 
 ## General
+
+!!!!!!!!!!!!!!!
+- [ ] coherent naming of variables in all codes
+!!!!!!!!!!!!!!!
+
 - [ ] automatic loading of aux functions and template plots
 - [x] temporal resolution of your data IN EVERY SINGLE CODE
 - [ ] build database (.csv) of satellite SM products (to aggregate sources in a single place)
