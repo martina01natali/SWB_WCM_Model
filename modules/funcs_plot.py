@@ -195,7 +195,7 @@ def plot_sim_vs_obs(sim:list, obs:list, quantity:str, um:str):
             ha="center", va="center", size=15,
             bbox=dict(boxstyle="round,pad=0.3", fc="tab:orange", ec="k", lw=2, alpha=.5))
     
-    ax.set_title(title+f'RMSE={RMSE:.2f}, R={R:.2f},'+r' $R^2$'+f'={R**2:.2f}, bias={B:.2f}')
+    ax.set_title(title+f'RMSE={RMSE:.2f}, R={R:.2f},'+r' $R^2$'+f'={R**2:.2f}, bias={BIAS:.2f}')
     ax.set_aspect('equal', adjustable='box')
     
 
