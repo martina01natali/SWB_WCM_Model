@@ -1,0 +1,12 @@
+# 6-2-23
+- [ ] [MICRO] 50 run, lin
+- [ ] [MICRO] 50 run, dB
+- [x] [MICRO] 50 run with fixed params W_max, lin
+- [ ] [MICRO] 50 run with fixed params W_max, dB
+- [ ] [MICRO] 50 run with fixed params W_max, lin
+- [ ] [MICRO] 50 run with fixed params W_max, dB
+- [ ] [MICRO] 50 run with fixed params W_max, lin
+- [ ] [MICRO] 50 run with fixed params W_max, dB
+- [ ] [MICRO] 50 run with fixed params W_max, lin
+- [ ] [MICRO] 50 run with fixed params W_max, dB
+- [ ] [MICRO] 50 run with fixed params W_max
