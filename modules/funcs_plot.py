@@ -42,7 +42,7 @@ def timeseries(dates, data):
 #############################################################################
 
 
-def plot_triple(times1:list, data1:list, data1_label:str, 
+def plot_triple(fig, ax, times1:list, data1:list, data1_label:str, 
                 input1:list, input1_label:str,
                 times2:list, data2:list, data2_label:str,
                 input2:list, input2_label:str,
