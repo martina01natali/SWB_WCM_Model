@@ -47,6 +47,7 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
                 times2:list, data2:list, data2_label:str,
                 input2:list, input2_label:str,
                 times3:list, data3:list, data3_label:list,
+                user_input:list,
                ):
     """3 subplots with 2 sim VS obs timeseries and eventual inputs
     
@@ -63,7 +64,7 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     Note: figure, saving options to be defined outside
     """
     
-    global irri
+    irri = user_input
     #----------------------------------------------------------------------
     # Plot 1 sim vs obs timeseries
     
@@ -111,7 +112,7 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     BIAS=bias(np.array([e[0] for e in simmatrix]),
               np.array([e[1] for e in simmatrix]))
     
-    if irri:
+    if irri==True:
         IRRmatrix = np.array( [ [IRR[i], IRR_obs[i]] for i in range(len(IRR))
                                if not np.isnan(IRR_obs[i]) ] )
         R_IRR=np.corrcoef(IRRmatrix,rowvar=False)[0][1]
