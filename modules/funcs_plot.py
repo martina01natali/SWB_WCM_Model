@@ -63,6 +63,7 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     Note: figure, saving options to be defined outside
     """
     
+    global irri
     #----------------------------------------------------------------------
     # Plot 1 sim vs obs timeseries
     
