@@ -5,6 +5,7 @@ import time
 import math
 import numpy as np
 import pandas as pd
+import hydroeval as he
 import datetime as dtt
 
 # Analysis
@@ -18,6 +19,23 @@ import seaborn as sns
 import matplotlib as mplt
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
+
+def bias(obs, sim):
+    """distance between obs' and sim's mean values"""
+    if len(obs)==len(sim):
+        return np.mean(obs-sim)
+    else: raise ValueError(
+        f'obs and sim must have same first dimension, but have shapes {np.shape(obs)} and {np.shape(sim)}')
+
+    
+def timeseries(dates, data):
+    """Returns a matrix (list of type(dates,data)) in the format [dates,data]"""
+    
+    if len(dates)==len(data):
+        return [[dates[i],data[i]] for i in range(len(dates))]
+    else: raise ValueError(
+        f'dates and data must have same first dimension, but have shapes {np.shape(dates)} and {np.shape(data)}')
 
 #############################################################################
 # Triple plot
