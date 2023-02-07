@@ -251,7 +251,7 @@ def IRR_WCM_allpar(PAR, inputs, user_in):
             W[t]=W_fc
             
     WW=np.array(W)/W_max
-    WWsat = np.array([ x[1] for x in timeseries(d,WW) if x[0] in d_sat ])
+    WWsat = np.array([ x[1] for x in timeseries(t,WW) if x[0] in t_sat ])
     
     # Water Cloud Model    
     sig0,KGE = WCM([A,B,C,D], [WWsat,veg,angle,sig0_obs], units=units)
