@@ -147,8 +147,9 @@ def IRR_WCM(PAR, inputs, user_in):
     
     # Water Cloud Model    
     sig0,KGE = WCM([A,B,C,D], [WWsat,veg,angle,sig0_obs], units=units)
-
+    
     return [WW,IRR,sig0,KGE]
+    
 
 
 #############################################################################
