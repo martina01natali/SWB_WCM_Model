@@ -1,11 +1,3 @@
-#############################################################################
-#############################################################################
-# ToDo
-#
-#############################################################################
-#############################################################################
-
-
 import os
 import re
 import time
@@ -69,13 +61,14 @@ def IRR_WCM(PAR, inputs, user_in):
     
     # Unpack inputs
     A, B, C, D, W_max, WW_fc, WW_w, rho_st, Kc0 = PAR
-    t, t_sat, P, IRR_obs, EPOT, WW_obs, WW_sat, veg, angle, sig0_obs = inputs
+    t, t_sat, P, IRR_obs, EPOT, Kc, WW_obs, WW_sat, veg, angle, sig0_obs = inputs
     
     # Fixed parameters
     # global WW_fc  # = 0.32 # 0.32
     # global WW_w   # = 0.08 # 0.08
     # global rho_st # = 0.4 # /24 # 0.4
     # global Kc0    # = 1 # 0.05 # 1
+    # global W_max
 
     W_fc   = WW_fc*W_max # field capacity [mm]
     W_w    = WW_w*W_max # wilting point [mm]
@@ -84,58 +77,30 @@ def IRR_WCM(PAR, inputs, user_in):
     rho    = np.array([.0]*len(t)) # depletion fraction
     PS     = np.array([.0]*len(t)) # deep percolation
     W      = np.array([.0]*len(t)) # water content [mm]
-    W[0]   = WW_obs[0]*W_max # initial value of sm [mm]    
+    W[0]   = WW_obs[0]*W_max # initial value of sm [mm]
+    Kc_array = Kc*Kc0
 
     if irri==True: IRR = [.0]*len(t) # water content
     else: IRR = IRR_obs
-    
-    # Build Kc curve
-    # Ref. FAO56, Tables 11, 12
-    START = t[0].dayofyear; END = t[-1].dayofyear
-    START_INI = 134 # first day with vegetation
-    L_INI=30; L_IM=40; # length initial and initial to mid stages
-    L_MID=45; L_ML=30; # length mid and mid to late stages
-    Kc_ini = 0.6*Kc0; Kc_mid = 1.15*Kc0; Kc_late= 0.7*Kc0
-    
-    # 24 added for compatibility with hourly dataset
-    m1 =(Kc_mid-Kc_ini)/L_IM/24 # hourly Kc growth in DEV phase 
-    m2 =(Kc_late-Kc_mid)/L_ML/24 # hourly Kc growth in senescence
-    
-    # Hourly array of Kc values
-    Kc_array = np.array([])
-    Kc_array = np.append(Kc_array, np.ones((START_INI-START)*24)*Kc_ini)
-    Kc_array = np.append(Kc_array, np.ones(L_INI*24)*Kc_ini)
-    Kc_array = np.append(Kc_array, [Kc_ini+m1*i for i in range(L_IM*24)])
-    Kc_array = np.append(Kc_array, np.ones(L_MID*24)*Kc_mid)
-    Kc_array = np.append(Kc_array, [Kc_mid+m2*i for i in range(L_ML*24)])
-    Kc_array = np.append(Kc_array, np.ones(len(t)-len(Kc_array))*Kc_late)
     
     for i in [i+1 for i in range(len(t)-1)]:
         
         DOY=t[i].dayofyear
         
         # Build Ks curve
-        Kc = Kc_array[i]
-        rho[i]=rho_st+0.04*(5-Kc*EPOT[i])
+        Kci = Kc_array[i]
+        
+        # Compute depletion fraction
+        rho[i]=rho_st+0.04*(5-Kci*EPOT[i]*24)
+        
         if W[i-1]>=(1-rho[i])*W_fc:
             Ks[i]=1
         elif (W[i-1]>W_w)and(W[i-1]<(1-rho[i])*W_fc):
             Ks[i]=float(W[i-1]-W_w)/((1-rho[i])*(W_fc-W_w))
-        else: Ks[i]=0
-        
-        # Adjusted evapotranspiration
-        ET[i] = EPOT[i]*Kc*Ks[i]
-        
-        # Irrigation estimate (for summer season only)
-        # Irrigation is estimated as the amount of water needed from the day
-        # before to take water content up to field capacity
-        if irri==True:
-            if np.logical_and(DOY>START,DOY<START+100): # summer season
-                if W[i-1]<=(1-rho[i])*W_fc: IRR[i]=W_fc-W[i-1]
-        
+        else: Ks[i]=0       
         
         # Water balance [mm]
-        W[i]=W[i-1]+P[i]+IRR[i]-ET[i]
+        W[i]=W[i-1]+P[i]+IRR[i]-EPOT[i]*Kci*Ks[i]
         
         # Computation of deep percolation (water above field capacity)
         if W[i]>W_fc:
@@ -147,9 +112,8 @@ def IRR_WCM(PAR, inputs, user_in):
     
     # Water Cloud Model    
     sig0,KGE = WCM([A,B,C,D], [WWsat,veg,angle,sig0_obs], units=units)
-    
+
     return [WW,IRR,sig0,KGE]
-    
 
 
 #############################################################################
