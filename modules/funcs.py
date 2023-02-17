@@ -52,7 +52,7 @@ def db_lin(x):
     return 10**(x/10)
 
 
-def norm(x):
+def norm_simple(x):
     """min-max normalization of x data"""
     return (x-np.min(x))/(np.max(x)-np.min(x))
 
@@ -80,10 +80,11 @@ def Rvalue(x:list,y:list)->float:
             f'x and y must have same first dimension,'+
             'but have shapes{np.shape(x)} and {np.shape(y)}')
         
-    matrix = np.array( 
-        [ [x[i], y[i]] for i in range(len(x))
-         if not (np.isnan(x[i])and(np.isnan(y[i]))) ] )
-    return np.corrcoef(matrix,rowvar=False)[0][1]
+    mask = ~(np.isnan(x) | np.isnan(y))
+    x_filtered = np.array(x)[mask]
+    y_filtered = np.array(y)[mask]
+    xy_filtered = np.transpose(np.column_stack((x_filtered, y_filtered)))
+    return np.corrcoef(xy_filtered)[0][1]
 
 
 def timeseries(dates, data):
