@@ -111,6 +111,7 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     R=np.corrcoef(simmatrix,rowvar=False)[0][1]; print('R (sim vs obs) =', R)
     BIAS=bias(np.array([e[0] for e in simmatrix]),
               np.array([e[1] for e in simmatrix]))
+    KGE_SM=he.evaluator(he.kge, sim, obs)[0,:][0]; print('KGE=', KGE_SM)
     
     if irri==True:
         IRRmatrix = np.array( [ [IRR[i], IRR_obs[i]] for i in range(len(IRR))
@@ -125,7 +126,7 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
                      f'bias_IRR={B_IRR:.2f}, '
     else: irri_title=''
     
-    title=f'{sim_label} VS {obs_label} - RMSE={RMSE:.2f}, R={R:.2f}, bias={BIAS:.2f}'+' '+f'{irri_title}'
+    title=f'{sim_label} VS {obs_label} - RMSE={RMSE:.2f}, R={R:.2f}, bias={BIAS:.2f}, KGE={KGE_SM:.2f}'+' '+f'{irri_title}'
     
     ax[1].set_xlim(xmin=times[0], xmax=times[-1])
     ax[1].plot(times, sim, c='tab:red', label=sim_label)

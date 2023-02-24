@@ -21,3 +21,11 @@ working on v8\_copy1 e \_copy2, 2 parallel simulations with 100 run with respect
 - \_large-bounds-Copy1: 2020, large Wmax, Wfc, Ww, narrow rho_st, large Kc0 (+- 50%)
 
 - \_large-bounds-Copy1: 2020, large Wmax, narrower Wfc [0.4,0.5], large Ww, narrow rho_st, large Kc0 (+- 50%)
+
+# 20-02-23
+**ToDo**
+- add control to ensure rho in [0.1, 0.8]
+    - try: interrupt for loop if rho[i] out of boundaries (break statement): checked and KGE is anyways high enough to be accepted
+    - try: return KGE at the point at which it finds out of bounds values: don't work, KGE from a certain point on is anyways too high and is accepted
+    - try: return fictious very low kge
+    - try: fix physical boundaries on Kc0

@@ -7,6 +7,7 @@ import pandas as pd
 import datetime as dtt
 import hydroeval as he
 
+
 def lin_db(x):
     """linear to dB"""
     return 10*np.log10(x)
@@ -62,51 +63,113 @@ def IRR_WCM(PAR, inputs, user_in):
     # Unpack inputs
     A, B, C, D, W_max, WW_fc, WW_w, rho_st, Kc0 = PAR
     t, t_sat, P, IRR_obs, EPOT, Kc, WW_obs, WW_sat, veg, angle, sig0_obs = inputs
-
-    W_fc   = WW_fc*W_max # field capacity [mm]
-    W_w    = WW_w*W_max # wilting point [mm]
-    ET     = np.array([.0]*len(t)) # evapotranspiration
-    Ks     = np.array([.0]*len(t)) # water stress coefficient
-    rho    = np.array([.0]*len(t)) # depletion fraction
-    PS     = np.array([.0]*len(t)) # deep percolation
-    W      = np.array([.0]*len(t)) # water content [mm]
-    W[0]   = WW_obs[0]*W_max # initial value of sm [mm]
-    if irri==True: IRR = [0]*len(d) # daily, water content
-    else: IRR = IRR_obs
-    Kc_array = Kc*Kc0
+    
+    angle_m = np.mean(angle)
+    Ks      = 0. # water stress coefficient
+    rho     = 0. # depletion fraction
+    WW      = np.array([.0]*len(t)) # water content [m3/m3]
+    WW[0]   = WW_obs[0] # initial value of sm [m3/m3]
+    depth   = 0. # dynamic depth [mm]
+    sig0    = np.array([.0]*len(t_sat)) # backscattering
+    
+    COST   = .0   # additional cost to KGE
+    LAMBDA = 1000 # Lagrange multiplier
+    
     
     for i in [i+1 for i in range(len(t)-1)]:
         
-        DOY=t[i].dayofyear
+        # Compute DoI of W[i-1]
+        depth = doi(freq=4,
+                    sand=45, clay=15,
+                    water=WW[i-1],
+                    angle=angle_m)\
+                    *1000\
+                    # *W_max\
+            # *1000 is to account for going from [m] to [mm] as units
         
-        # Build Ks curve
-        Kci = Kc_array[i]
+        # Build Ks curve    
+        # Compute crop coeff and depletion fraction
+        Kci = Kc[i]*Kc0
+        rho=rho_st+0.04*(5-Kci*EPOT[i]*24)
+        if   rho<0.1: COST += (rho-0.1)**2 # regularization
+        elif rho>0.8: COST += (rho-0.8)**2 # regularization
         
-        # Compute depletion fraction
-        rho[i]=rho_st+0.04*(5-Kci*EPOT[i]*24)
-        
-        if W[i-1]>=(1-rho[i])*W_fc:
-            Ks[i]=1
-        elif (W[i-1]>W_w)and(W[i-1]<(1-rho[i])*W_fc):
-            Ks[i]=float(W[i-1]-W_w)/((1-rho[i])*(W_fc-W_w))
-        else: Ks[i]=0       
+        if WW[i-1]>=(1-rho)*WW_fc:
+            Ks=1
+        elif (WW[i-1]>WW_w)and(WW[i-1]<(1-rho)*WW_fc):
+            Ks=float(float(WW[i-1]-WW_w)/float((1-rho)*(WW_fc-WW_w)))
+        else: Ks=0
         
         # Water balance [mm]
-        W[i]=W[i-1]+P[i]+IRR[i]-EPOT[i]*Kci*Ks[i]
+        WW[i]=WW[i-1]+(P[i]+IRR_obs[i]-EPOT[i]*Kci*Ks)/(depth)
         
         # Computation of deep percolation (water above field capacity)
-        if W[i]>W_fc:
-            PS[i]=W[i]-W_fc
-            W[i]=W_fc
+        if WW[i]>WW_fc:
+            # PS[i]=(WW[i]-WW_fc)*depth[i]
+            WW[i]=WW_fc
             
-    WW=np.array(W)/W_max
     WWsat = np.array([ x[1] for x in timeseries(t,WW) if x[0] in t_sat ])
     
-    # Water Cloud Model    
+    # Water Cloud Model
     sig0,KGE = WCM([A,B,C,D], [WWsat,veg,angle,sig0_obs], units=units)
+    
+    KGE += -LAMBDA*COST
+    
+    return [WW,IRR_obs,sig0,KGE]
 
-    return [WW,IRR,sig0,KGE]
 
+#############################################################################
+# Water Cloud Model #############################################################################
+
+def WCM(PAR, data_in, units='lin'):
+    """Water Cloud Model.
+    
+    This function simulates backscattering with WCM and returns
+    the KGE index to perform its minimization for calibration
+    of parameters A,B,C,D.
+    WCM is parametrized with a single vegetation descriptor (nominated
+    LAI, but can be anything).
+    Fitting can be performed in linear or dB scale.
+    The model is written in one line in both units: this makes the calibration slightly slower, but provides more stability in the parameters' distributions.
+    
+    
+    Inputs
+    ------
+    - PAR: list
+        List of initial guesses for the parameters to calibrate.
+    - data_in: list
+        List of inputs of observables, that must be in the form:
+        [SM,LAI,t_deg,obs], being SM = soil moisture,
+        LAI = Leaf Area Index, t_deg = angle of observation,
+        obs = observed total sigma0
+    - units: str, default 'linear'
+        choose to calibrate the model's parameters in 'linear' or 'db' scale
+        
+    Return
+    ------
+    KGE between simulated and observed backscattering.
+    
+    """
+
+    A,B,C,D = PAR # parameters to fit
+    WWsat,veg,angle,obs = data_in # input data
+    
+    theta  = angle*np.pi/180. # angle of incidence
+    
+    if units=='lin':
+        sig0 = lin_db((np.exp((-2*B*veg)/np.cos(theta)))*(db_lin(C+D*WWsat))\
+                      +A*veg*np.cos(theta)\
+                      *(1-(np.exp((-2*B*veg)/np.cos(theta)))))
+    elif units=='db':
+        sig0 = (np.exp((-2*B*veg)/np.cos(theta)))*(C+D*WWsat)\
+        +(A*veg*np.cos(theta)\
+          *(1-(np.exp((-2*B*veg)/np.cos(theta)))))
+    else: raise NameError('Please choose one of the options: lin/db')
+        
+    OUT=he.evaluator(he.kge, sig0, obs) # OUT is kge, r, alpha, beta
+    KGE=OUT[0,:][0]
+
+    return [sig0,KGE]
 
 #############################################################################
 # Model with all parameters to input by default
@@ -214,61 +277,6 @@ def IRR_WCM_allpar(PAR, inputs, user_in):
     sig0,KGE = WCM([A,B,C,D], [WWsat,veg,angle,sig0_obs], units=units)
 
     return [WW,IRR,sig0,KGE]
-
-
-
-#############################################################################
-# Water Cloud Model #############################################################################
-
-def WCM(PAR, data_in, units='lin'):
-    """Water Cloud Model.
-    
-    This function simulates backscattering with WCM and returns
-    the KGE index to perform its minimization for calibration
-    of parameters A,B,C,D.
-    WCM is parametrized with a single vegetation descriptor (nominated
-    LAI, but can be anything).
-    Fitting can be performed in linear or dB scale.
-    The model is written in one line in both units: this makes the calibration slightly slower, but provides more stability in the parameters' distributions.
-    
-    
-    Inputs
-    ------
-    - PAR: list
-        List of initial guesses for the parameters to calibrate.
-    - data_in: list
-        List of inputs of observables, that must be in the form:
-        [SM,LAI,t_deg,obs], being SM = soil moisture,
-        LAI = Leaf Area Index, t_deg = angle of observation,
-        obs = observed total sigma0
-    - units: str, default 'linear'
-        choose to calibrate the model's parameters in 'linear' or 'db' scale
-        
-    Return
-    ------
-    KGE between simulated and observed backscattering.
-    
-    """
-
-    A,B,C,D = PAR # parameters to fit
-    WWsat,veg,angle,obs = data_in # input data
-    
-    theta  = angle*np.pi/180. # angle of incidence
-    
-    if units=='lin':
-        sig0 = lin_db((np.exp((-2*B*veg)/np.cos(theta)))*(db_lin(C+D*WWsat))\
-                      +A*veg*np.cos(theta)\
-                      *(1-(np.exp((-2*B*veg)/np.cos(theta)))))
-    elif units=='db':
-        sig0 = (np.exp((-2*B*veg)/np.cos(theta)))*(C+D*WWsat)\
-        +(A*veg*np.cos(theta)\
-          *(1-(np.exp((-2*B*veg)/np.cos(theta)))))
-    else: raise NameError('Please choose one of the options: lin/db')
-        
-    OUT=he.evaluator(he.kge, sig0, obs) # OUT is kge, r, alpha, beta
-    KGE=OUT[0,:][0]
-
-    return [sig0,KGE]
 
 #----------------------------------------------------------------------------
 
@@ -400,6 +408,62 @@ def SWB(PAR_SWB, inputs, user_in):
 
     return [WW,IRR]
 
+
+#############################################################################
+# Hallikainen model for doi estimation
+#############################################################################
+
+import numpy as np
+
+# Part,Frequency(GHz),a0,a1,a2,b0,b1,b2,c0,c1,c2
+coeff = {
+    4: 
+    {
+        'real':[ 2.927,-0.012,-0.001,5.505,0.371,0.062,114.826,-0.389,-0.547],
+        'img':[0.004,0.001,0.002,0.951,0.005,-0.01,16.759,0.192,0.29]
+    },
+    6: 
+    {
+        'real':[1.993,0.002,0.015,38.086,-0.176,-0.633,10.72,1.256,1.522],
+        'img':[-0.123,0.002,0.003,7.502,-0.058,-0.116,2.942,0.452,0.543]
+    }
+}
+
+
+def hallikainen(freq:int, sand:float, clay:float, water:np.array):
+    """
+    coeff: dict('real':[],'img':[])
+    """
+    global coeff
+    
+    coeff_r = np.array(coeff[freq]['real'])
+    real = coeff_r[0]+coeff_r[1]*sand+coeff_r[2]*clay+\
+    (coeff_r[3]+coeff_r[4]*sand+coeff_r[5]*clay)*water+\
+    (coeff_r[6]+coeff_r[7]*sand+coeff_r[8]*clay)*(water**2)
+        
+    coeff_i = np.array(coeff[freq]['img'])
+    img = coeff_i[0]+coeff_i[1]*sand+coeff_i[2]*clay+\
+    (coeff_i[3]+coeff_i[4]*sand+coeff_i[5]*clay)*water+\
+    (coeff_i[6]+coeff_i[7]*sand+coeff_i[8]*clay)*(water**2)
+    
+    return real, img
+
+def doi(freq:int, sand:float, clay:float, water:np.array, angle:float):
+    """
+    freq [GHz]
+    angle [°]
+    
+    return depth [m]
+    """
+    c = 299792458 # m/s
+    theta  = angle*np.pi/180. # angle [rad]
+    
+    real = hallikainen(freq, sand=sand, clay=clay, water=water)[0]
+    img = hallikainen(freq, sand=sand, clay=clay, water=water)[1]
+    
+    depth =  c/(2*np.pi*freq*1e9)*(np.sqrt(real)/img)*np.cos(theta)
+    
+    return depth
 
 
 #############################################################################
