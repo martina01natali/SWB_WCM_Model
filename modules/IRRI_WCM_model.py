@@ -84,8 +84,8 @@ def IRR_WCM(PAR, inputs, user_in):
                     water=WW[i-1],
                     angle=angle_m)\
                     *1000\
-                    # *W_max\
-            # *1000 is to account for going from [m] to [mm] as units
+                    *W_max\
+            # *1000 is to account for going from [m] to [mm]
         
         # Build Ks curve    
         # Compute crop coeff and depletion fraction
