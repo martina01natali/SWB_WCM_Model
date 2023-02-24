@@ -89,8 +89,7 @@ def IRR_WCM(PAR, inputs, user_in):
         
         # Build Ks curve    
         # Compute crop coeff and depletion fraction
-        Kci = Kc[i]*Kc0
-        rho=rho_st+0.04*(5-Kci*EPOT[i]*24)
+        rho=rho_st+0.04*(5-Kc[i]*Kc0*EPOT[i]*24)
         if   rho<0.1: COST += (rho-0.1)**2 # regularization
         elif rho>0.8: COST += (rho-0.8)**2 # regularization
         
@@ -101,7 +100,7 @@ def IRR_WCM(PAR, inputs, user_in):
         else: Ks=0
         
         # Water balance [mm]
-        WW[i]=WW[i-1]+(P[i]+IRR_obs[i]-EPOT[i]*Kci*Ks)/(depth)
+        WW[i]=WW[i-1]+(P[i]+IRR_obs[i]-EPOT[i]*Kc[i]*Kc0*Ks)/(depth)
         
         # Computation of deep percolation (water above field capacity)
         if WW[i]>WW_fc:
