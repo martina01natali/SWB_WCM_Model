@@ -75,11 +75,13 @@ def IRR_WCM(PAR, inputs, user_in):
     COST   = .0   # additional cost to KGE
     LAMBDA = 1000 # Lagrange multiplier
     
+    try: global freq
+    except NameError: freq=6
     
     for i in [i+1 for i in range(len(t)-1)]:
         
         # Compute DoI of W[i-1]
-        depth = doi(freq=4,
+        depth = doi(freq=freq,
                     sand=45, clay=15,
                     water=WW[i-1],
                     angle=angle_m)\
@@ -103,9 +105,7 @@ def IRR_WCM(PAR, inputs, user_in):
         WW[i]=WW[i-1]+(P[i]+IRR_obs[i]-EPOT[i]*Kc[i]*Kc0*Ks)/(depth)
         
         # Computation of deep percolation (water above field capacity)
-        if WW[i]>WW_fc:
-            # PS[i]=(WW[i]-WW_fc)*depth[i]
-            WW[i]=WW_fc
+        if WW[i]>WW_fc: WW[i]=WW_fc
             
     WWsat = np.array([ x[1] for x in timeseries(t,WW) if x[0] in t_sat ])
     
