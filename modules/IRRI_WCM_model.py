@@ -61,8 +61,8 @@ def IRR_WCM(PAR, inputs, user_in):
     irri, units = user_in
     
     # Unpack inputs
-    A, B, C, D, W_max, WW_fc, WW_w, rho_st, Kc0 = PAR
-    t, t_sat, P, IRR_obs, EPOT, Kc, WW_obs, WW_sat, veg, angle, sig0_obs = inputs
+    A, B, C, D, WW_fc, WW_w, rho_st, Kc0 = PAR
+    t, t_sat, P, IRR_obs, EPOT, Kc, WW_obs, WW_sat, veg, angle, sig0_obs, freq = inputs
     
     angle_m = np.mean(angle)
     Ks      = 0. # water stress coefficient
@@ -75,9 +75,6 @@ def IRR_WCM(PAR, inputs, user_in):
     COST   = .0   # additional cost to KGE
     LAMBDA = 1000 # Lagrange multiplier
     
-    try: global freq
-    except NameError: freq=6
-    
     for i in [i+1 for i in range(len(t)-1)]:
         
         # Compute DoI of W[i-1]
@@ -86,7 +83,7 @@ def IRR_WCM(PAR, inputs, user_in):
                     water=WW[i-1],
                     angle=angle_m)\
                     *1000\
-                    *W_max\
+                    # *W_max\
             # *1000 is to account for going from [m] to [mm]
         
         # Build Ks curve    
