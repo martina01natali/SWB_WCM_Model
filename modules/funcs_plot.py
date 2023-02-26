@@ -255,6 +255,7 @@ def hist_gauss_fit(data, nbins, hist_kwargs, fitline_kwargs,
 
     x = np.linspace(min(data), max(data), 200)
     counts, bins, pads = plt.hist(data, bins=nbins, density=density, **hist_kwargs)
+    
     if func==gauss:
         fit_bounds = [ [0,min(bins),0],
                       [sum(counts)*np.diff(bins)[0],max(bins),abs(max(bins)-min(bins))] ]
@@ -264,17 +265,13 @@ def hist_gauss_fit(data, nbins, hist_kwargs, fitline_kwargs,
                       # [-10, 10]
                      ]
     else: raise ValueError(f'Func {func} is not a valid option.')
-    popt, pcov = curve_fit(func, bins[:-1], counts, method='trf',bounds=fit_bounds, maxfev=1000)
+    
+    popt, pcov = curve_fit(func, bins[:-1], counts, method='trf', bounds=fit_bounds, maxfev=1000)
     fit = func(x, *popt)
     plt.plot(x, fit, **fitline_kwargs)
     ylabel = 'Density' if density else 'Counts'; plt.ylabel(ylabel)
-    plt.legend(loc='best'); plt.title(title)
-    xtext= 0.5*(plt.xlim()[1]-plt.xlim()[0])+plt.xlim()[0] # 0.8*(max(x)-min(x))+min(x);
-    ytext=0.5*max(counts) #0.5*(max(counts)-min(counts))+min(counts)
-    t = plt.text(xtext, ytext,
-                 f'tot counts={len(data)}\nmean={popt[1]:.2f}\ndev={popt[2]:.2f} ({popt[2]/abs(popt[1])*100:.1f}%)',
-                 ha="center", va="center", size=15,
-                 bbox=dict(boxstyle="round,pad=0.3", fc="tab:orange", ec="k", lw=2, alpha=.5))
+    plt.xlabel(title);
+    plt.legend(loc='best');
     
     if opt_save: plt.savefig(dir_name+opt_name+'.png', dpi=300)
     
@@ -291,3 +288,14 @@ def hist_gauss_fit(data, nbins, hist_kwargs, fitline_kwargs,
 #     NS_lnQ=1-np.nansum((np.log(sim+0.0001)-np.log(obs+0.0001))**2)/np.nansum((np.log(obs+0.0001)-np.nanmean(np.log(obs+0.0001)))**2)
 #     NS_lnQ=NS_lnQ.real; # print(NS_lnQ) 
 #     NS_radQ=NS_radQ.real; # print(NS_radQ)
+
+#----------------------------------------------------------------------------
+# Etichette su hist_gauss_fit
+
+# xtext = 0.5*(plt.xlim()[1]-plt.xlim()[0])+plt.xlim()[0] # 0.8*(max(x)-min(x))+min(x);
+# ytext = 0.5*max(counts) #0.5*(max(counts)-min(counts))+min(counts)
+# t = plt.text(xtext, ytext,
+#              f'tot #={len(data)}\nmean={popt[1]:.2f}\ndev={popt[2]:.2f}\
+#              ({popt[2]/abs(popt[1])*100:.1f}%)',
+#              ha="center", va="center", size=15,
+#              bbox=dict(boxstyle="round,pad=0.3", fc="tab:orange", ec="k", lw=2, alpha=.5))
