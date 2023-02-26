@@ -61,7 +61,7 @@ def IRR_WCM(PAR, inputs, user_in):
     irri, units = user_in
     
     # Unpack inputs
-    A, B, C, D, WW_fc, WW_w, rho_st, Kc0 = PAR
+    A, B, C, D, WW_fc, WW_w, Kc0 = PAR
     t, t_sat, P, IRR_obs, EPOT, Kc, WW_obs, WW_sat, veg, angle, sig0_obs, freq = inputs
     
     angle_m = np.mean(angle)
@@ -71,6 +71,7 @@ def IRR_WCM(PAR, inputs, user_in):
     WW[0]   = WW_obs[0] # initial value of sm [m3/m3]
     depth   = 0. # dynamic depth [mm]
     sig0    = np.array([.0]*len(t_sat)) # backscattering
+    global rho_st
     
     COST   = .0   # additional cost to KGE
     LAMBDA = 1000 # Lagrange multiplier
