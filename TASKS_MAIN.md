@@ -4,11 +4,10 @@
 
 ## General
 
-!!!!!!!!!!!!!!!
 - [ ] coherent naming of variables in all codes
-!!!!!!!!!!!!!!!
 
-- [ ] automatic loading of aux functions and template plots
+- [x] implement skew normal fit on parameters' distributions
+- [x] automatic loading of aux functions and template plots
 - [x] temporal resolution of your data IN EVERY SINGLE CODE
 - [ ] build database (.csv) of satellite SM products (to aggregate sources in a single place)
 - [ ] check data in diario di campo (ask Matteo, CER)

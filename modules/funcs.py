@@ -96,6 +96,15 @@ def timeseries(dates, data):
         f'dates and data must have same first dimension, but have shapes {np.shape(dates)} and {np.shape(data)}')
     
 
+def significant_figures_str(master, slave):
+    master_rounded = float("%.1g" % master)
+    master_rounded_str = str(master_rounded)
+    digits = master_rounded_str[::-1].find('.')
+    slave_rounded_str = str(f'%.{digits}f' % slave)
+    
+    return [master_rounded_str, slave_rounded_str]
+    
+
 #----------------------------------------------------------------------------
 # Data analysis, fit
 # Fitting functions
