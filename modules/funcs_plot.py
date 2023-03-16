@@ -20,6 +20,21 @@ import matplotlib as mplt
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
+#############################################################################
+# Plotting options (rcParams)
+#############################################################################
+
+rc_dict = {
+    'axes.titlesize' : 16,
+    'axes.labelsize' : 16,
+    # lines.linewidth : 3,
+    # lines.markersize : 10,
+    'xtick.labelsize' : 16,
+    'ytick.labelsize' : 16,
+    'legend.fontsize' : 'x-large',
+}
+
+#############################################################################
 
 def bias(obs, sim):
     """distance between obs' and sim's mean values"""
@@ -37,11 +52,12 @@ def timeseries(dates, data):
     else: raise ValueError(
         f'dates and data must have same first dimension, but have shapes {np.shape(dates)} and {np.shape(data)}')
 
+    
 #############################################################################
 # Triple plot
 #############################################################################
 
-
+@mplt.rc_context(rc_dict)
 def plot_triple(fig, ax, times1:list, data1:list, data1_label:str, 
                 input1:list, input1_label:str,
                 times2:list, data2:list, data2_label:str,
@@ -73,6 +89,7 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     labely = data1_label
     times = times1
     marker='o'; linestyle='-'
+    units=r' $[dB]$'
     
     # RMSE, R, bias, KGE calculation
     RMSE=np.mean((sim-obs)**2)**0.5; print('RMSE =', RMSE)
@@ -89,12 +106,14 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
                linestyle=linestyle, marker=marker, alpha=.4, zorder=-1)
     ax[0].legend(loc='upper left')
     ax[0].set_title(title)
-    ax[0].set_ylabel(labely)
+    ax[0].set_ylabel(labely+units)
     
+    units = r' $[-]$'
     ax1 = ax[0].twinx()
     ax1.plot(times, input1, label=input1_label, color='tab:green')
     ax1.legend(loc='upper right')
-    ax1.set_ylabel(input1_label)
+    ax1.set_ylabel(input1_label+units)
+    
     
     #-----------------------------------------------------------------------
     # Plot 2 sim vs obs timeseries
@@ -103,6 +122,7 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     sim = data2[1]; sim_label=data2_label+'_sim'
     labely = data2_label
     times = times2
+    units = r' $[m^3/m^3]$'
     
     # RMSE, R, bias calculation
     simmatrix = np.array( [ [sim[i], obs[i]] for i in range(len(sim))
@@ -131,27 +151,35 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     ax[1].set_xlim(xmin=times[0], xmax=times[-1])
     ax[1].plot(times, sim, c='tab:red', label=sim_label)
     ax[1].plot(times, obs, c='tab:blue', label=obs_label,
-               linestyle='-', alpha=.8, zorder=-1)
+               linestyle='-', alpha=.7, zorder=-1)
     ax[1].legend(loc='upper left')
     ax[1].set_title(title)
-    ax[1].set_ylabel(data2_label)
+    ax[1].set_ylabel(data2_label+units)
     
     #-----------------------------------------------------------------------
     # Plot of inputs P, IRR, veg
     
     label1, label2, label3 = data3_label
     times = times3
+    units = r' $[mm]$'
     
     ax[2].bar(times, data3[0], color='tab:gray', label=label1)
     ax[2].bar(times, data3[1], color='tab:blue', label=label2, zorder=2)
     ax[2].legend(loc='upper left')
-    ax[2].set_ylabel(label1+label2)
+    ax[2].set_ylabel(label1+', '+label2+units)
     
     ax2 = ax[2].twinx()
     ax2.plot(times, data3[2], label=label3, color='tab:green')
     ax2.legend(loc='upper right')
-    ax2.set_ylabel(label3)
-        
+    ax2.set_ylabel(label3+r' $[mm/h]$')
+    
+    
+    
+    ax[0].set_ylim(-17, -3)
+    ax[1].set_ylim(0.06, .4)
+    ax1.set_ylim(0,1)
+    ax[2].set_ylim(0, 25)
+    ax2.set_ylim(0,.3)    
         
         
 #############################################################################
@@ -178,28 +206,30 @@ def plot_sim_vs_obs(sim:list, obs:list, quantity:str, um:str):
     gs = gridspec.GridSpec(nrows=1, ncols=1, width_ratios=[1], height_ratios=[1])
     ax = plt.subplot(gs[0])
     ax.plot(x, y, marker='o', linestyle='', color='tab:blue')
-    ax.set_xlim(np.min([x,y])-0.1*abs(np.mean([x,y])), np.max([x,y])+0.1*abs(np.mean([x,y])))
-    ax.set_ylim(np.min([x,y])-0.1*abs(np.mean([x,y])), np.max([x,y])+0.1*abs(np.mean([x,y])))
-    lin_grid = np.linspace(ax.get_xlim()[0], ax.get_xlim()[1], 100); ax.plot(lin_grid, lin_grid, color='k')
+    min_common = np.min([x,y])-0.1*abs(np.mean([x,y]))
+    max_common = np.max([x,y])+0.1*abs(np.mean([x,y]))
+    ax.set_xlim(min_common, max_common)
+    ax.set_ylim(min_common, max_common)
+    lin_grid = np.linspace(ax.get_xlim()[0], ax.get_xlim()[1], 100); # ax.plot(lin_grid, lin_grid, color='k') # y = x
     
     # Fit
     popt, pcov = curve_fit(linear, x, y)
-    ax.plot(lin_grid, linear(np.array(lin_grid),*popt), color='tab:orange')
+    ax.plot(lin_grid, linear(np.array(lin_grid),*popt), color='k')
     
     RMSE=np.nanmean((sim-obs)**2)**0.5; print('RMSE =', RMSE)
     R=np.corrcoef(x,y)[0][1]; print('R=', R, 'R^2=', R**2)
     BIAS=bias(x,y); print('bias=', BIAS)
     
     ax.set_xlabel(xlabel); ax.set_ylabel(ylabel)
-    xtext=0.8*(np.max(x)-np.min(x))+np.min(x)  ; ytext=0.1*(np.max(y)-np.min(y))+np.min(y)
+    xtext=0.2*(max_common-min_common)+min_common
+    ytext=0.9*(max_common-min_common)+min_common
     ax.text(xtext, ytext,
-            f'y={popt[0]:.2f}+{popt[1]:.2f}x\n'+
-            r'$R^2$'+f'={R**2:.2f}',
+            f'y={popt[0]:.2f}+{popt[1]:.2f}x',
             ha="center", va="center", size=15,
-            bbox=dict(boxstyle="round,pad=0.3", fc="tab:orange", ec="k", lw=2, alpha=.5))
+            bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="k", lw=2, alpha=.5))
     
     ax.set_title(title+f'RMSE={RMSE:.2f}, R={R:.2f},'+r' $R^2$'+f'={R**2:.2f}, bias={BIAS:.2f}')
-    ax.set_aspect('equal', adjustable='box')
+    ax.set_aspect('equal', adjustable='box', share=True)
     
 
 #############################################################################
@@ -236,47 +266,6 @@ def skew_gauss(x, A, mean, dev, alpha,):
     pdf = (1/(dev*np.sqrt(2*np.pi)))*np.exp(-pow((x-mean),2)/(2*pow(dev,2)))
     cdf = sp.erfc((-alpha*(x-mean))/(dev*np.sqrt(2)))
     return A*pdf*cdf
-
-
-#----------------------------------------------------------------------------
-def hist_gauss_fit(data, nbins, hist_kwargs, fitline_kwargs,
-                   title, density=False,
-                   opt_save=False, dir_name='', opt_name='hist_fit',
-                   func=gauss,
-                  ):
-    """Histogram with automatic gaussian fit.
-    
-    Arguments
-    ---------
-    - func: object, default gauss
-        WARNING: skew_gauss not supported yet    
-        
-    """
-
-    x = np.linspace(min(data), max(data), 200)
-    counts, bins, pads = plt.hist(data, bins=nbins, density=density, **hist_kwargs)
-    
-    if func==gauss:
-        fit_bounds = [ [0,min(bins),0],
-                      [sum(counts)*np.diff(bins)[0],max(bins),abs(max(bins)-min(bins))] ]
-    elif func==skew_gauss:
-        fit_bounds = [ [0,min(bins),0],
-                      [sum(counts)*np.diff(bins)[0],max(bins),abs(max(bins)-min(bins))],
-                      # [-10, 10]
-                     ]
-    else: raise ValueError(f'Func {func} is not a valid option.')
-    
-    popt, pcov = curve_fit(func, bins[:-1], counts, method='trf', bounds=fit_bounds, maxfev=1000)
-    fit = func(x, *popt)
-    plt.plot(x, fit, **fitline_kwargs)
-    ylabel = 'Density' if density else 'Counts'; plt.ylabel(ylabel)
-    plt.xlabel(title);
-    plt.legend(loc='best');
-    
-    if opt_save: plt.savefig(dir_name+opt_name+'.png', dpi=300)
-    
-    return [counts, bins, pads, popt, pcov]
-
 
 
 #############################################################################

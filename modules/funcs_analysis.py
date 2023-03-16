@@ -161,6 +161,7 @@ def hist_gauss_fit(data, nbins, hist_kwargs, fitline_kwargs,
     
     if opt_save: plt.savefig(dir_name+opt_name+'.png', dpi=300)
     
+    
     return [counts, bins, pads, popt, pcov, q1, q2, q3, mode]
 
 #############################################################################
