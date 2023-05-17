@@ -5,6 +5,9 @@
 ## General
 
 - [ ] coherent naming of variables in all codes
+- [ ] prepare list of inputs needed
+- [ ] make daily and hourly versions of code
+- [ ] CLEAN UP
 
 - [x] implement skew normal fit on parameters' distributions
 - [x] automatic loading of aux functions and template plots
@@ -69,10 +72,10 @@ To run this code in a significant way, follow:
 - 3. normalize backscattering for acquisition geometry (angle) HOW??? options: cosine, **distribution bias elimination**
 
 ## WATERSTEM w/ UniFi
+- [ ] prepare overview of WATERSTEM inputs needed / output required (Google doc)
 - [ ] review optical indexes from Luca's codes
 - [ ] review speckle codes (suggested repository, starred on github)
 - [x] implement GEE normalization of sigma0 values (@ about 40°) and update code on shared repository
-- [ ] prepare overview of WATERSTEM inputs needed / output required (Google doc)
 
 
 ## Optimizer (PSO) performance check

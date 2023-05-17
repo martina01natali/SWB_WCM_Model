@@ -1,0 +1,136 @@
+
+Link to the code: https://code.earthengine.google.com/87b5b127364d086f3ec2d3ea18876ed0 (should open the code editor in GEE and automatically run the script)
+
+Script: (copy paste in GEE code editor if the link does not work :) )
+
+// The following script extract the mean and variance of different type of satellite data (NDVI from S2 and PET from MOD16A2) over a predefined AOI.
+// Load geometries from asset tab 
+
+// Import geometries as variables
+var SanLorenzo1 = ee.FeatureCollection(sanLorenzo1).geometry();
+var SanLorenzo2 = ee.FeatureCollection(sanLorenzo2).geometry();
+
+// Select the area of interest
+var AOI = SanLorenzo1   // Insert here your area of interest 
+
+Map.centerObject(AOI)
+Map.addLayer(AOI, {color: 'green'}, 'AOI'); 
+
+///// NDVI /////
+
+// Define function to generate 'clear_sky' Sentinel-2 images using SCL.
+    var s2_clear_sky = function(image){
+      var scl = image.select('SCL');
+      var clear_sky_pixels = scl.eq(4).or(scl.eq(5)).or(scl.eq(6)).or(scl.eq(7)).or(scl.eq(11));
+      return image.updateMask(clear_sky_pixels);
+    };
+
+// Define function to calculate NDVI and store it as a band
+var NDVIcalc = function(image){
+  var NDVI = image.normalizedDifference(['B8','B4']).rename('NDVI')
+  return image.addBands(NDVI)
+}
+
+// Combine the mean and standard deviation reducers.
+var reducers = ee.Reducer.mean().combine({
+  reducer2: ee.Reducer.variance(),
+  sharedInputs: true
+});
+
+// Define a function to extract the mean of NDVI and its variance over the area of interest. The output is returned as a feature collection with the mean and variance as properties
+var extractMeanVarNDVI = function(image){
+                    var NDVI = image.select('NDVI') // Select VIs
+                    var reduced = NDVI.reduceRegion({  // Calculate mean and variance of VIs over the area of interest
+                        geometry: AOI,
+                        reducer: reducers,
+                        scale:10
+                     })
+                    var date = ee.Dictionary({Date: image.date()}) // Retrieve date from S2 image
+                    var properties = reduced.combine(date)   // Add date to the dictionary of properties
+                    var output = (ee.Feature(null,properties)) // Set the reducer's output as properties of each feature
+                     return ee.FeatureCollection(output)
+}
+
+// Load S2 imagery according to predefined parameters and apply functions
+var NDVISanLorenzo = ee.ImageCollection("COPERNICUS/S2_SR") // Level-2A Surface reflectance
+                    .filterDate("2014-10-01","2022-12-19") // Select time period (S2 actually starts in 2017)
+                    .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 25)) // Exclude cloudy images entirely (> 25% clouds)
+                    .filter(ee.Filter.bounds(AOI)) // Select only the tiles covering the study area
+                    .map(s2_clear_sky)  // Mask out remaining clouds and shadows
+                    .map(NDVIcalc)  // Calculate NDVI
+                    .map(extractMeanVarNDVI)
+                    .flatten()
+                    
+print(NDVISanLorenzo, 'Result: mean and variance of NDVI over the AOI')
+
+// Export to drive
+Export.table.toDrive({
+  collection: NDVISanLorenzo,
+  folder: 'GEE_downloads', // Use a folder of your own drive
+  description: 'Sanlorenzo_NDVI', // Use appropriate naming 
+  fileFormat: 'CSV'
+});
+
+///// PET /////
+
+/* 
+This part is not needed as MOD16A2 data are already 'filtered' for quality control (for details see section 6.2.1 of the user guide: https://lpdaac.usgs.gov/documents/494/MOD16_User_Guide_V6.pdf )
+
+// Helper function to extract the values from specific bits
+// The input parameter can be a ee.Number() or ee.Image() (code for the bitwise mask and function adapted from 'https://spatialthoughts.com/2021/08/19/qa-bands-bitmasks-gee/', copyleft type of licence), further from https://gis.stackexchange.com/a/349401/5160)
+var bitwiseExtract = function(input, fromBit, toBit) {
+  var maskSize = ee.Number(1).add(toBit).subtract(fromBit)
+  var mask = ee.Number(1).leftShift(maskSize).subtract(1)
+  return input.rightShift(fromBit).bitwiseAnd(mask)
+}
+
+// Define a function to mask bad quality/cloudy pixels 
+var QcMask = function(image) {
+  var PET = image.select('PET')
+  var bitMask = image.select('ET_QC')
+  var qualityMask = bitwiseExtract(bitMask, 0,0).lt(1) // Only 'good quality' pixels
+  var cloudMask1 = bitwiseExtract(bitMask, 3, 4).lt(1) // No clouds
+  var clouMask2 = bitwiseExtract(bitMask, 3, 4).gt(2) // Cloud state not defined, assumed clear
+  var confidenceMask = bitwiseExtract(bitMask,5, 7).lt(2) // Best or good result
+  var mask = qualityMask.and(cloudMask1).and(clouMask2).and(confidenceMask)
+  return PET.updateMask(mask)
+}
+*/
+
+// Define a function to recale PET values (scaling factor is 0.1)
+var rescalePET = function(img){
+                   // Rescale to actual PET values in kg/m2/8day (keeping all properties for further processing)
+                    var rescaled = img.multiply(0.1).copyProperties(img, img.propertyNames())   
+                      return rescaled
+                  }
+
+// Define a function to extract the mean of PET and its variance over the area of interest. The output is returned as a feature collection with mean and variance as properties
+var extractMeanVarPET = function(image){
+                    var NDVI = image.select('PET') // Select PET band
+                    var reduced = NDVI.reduceRegion({  // Calculate mean and variance of PET over the area of interest
+                        geometry: AOI,
+                        reducer: reducers,
+                        scale:500
+                     })
+                    var date = ee.Dictionary({Date: image.date()}) // Retrieve date from image
+                    var properties = reduced.combine(date)   // Add date to the dictionary of properties
+                    var output = (ee.Feature(null,properties)) // Set the reducer's output as properties of each feature
+                     return ee.FeatureCollection(output)}
+
+// Load MODIS16A data (8-day aggregated global dataset at 500m) according to predefined parameters and apply functions
+var PetSanLorenzo = ee.ImageCollection('MODIS/006/MOD16A2')
+                  .filter(ee.Filter.bounds(AOI))
+                  .filterDate("2014-10-01","2022-12-19")// Select time period (MODIS starts from 2001)
+                  .map(rescalePET)
+                  .map(extractMeanVarPET) 
+                  .flatten()
+                  
+print(PetSanLorenzo, 'Result: mean and variance of PET over the AOI')
+
+// Export to drive
+Export.table.toDrive({
+  collection: PetSanLorenzo,
+  folder: 'GEE_downloads', // Use a folder of your own drive
+  description: 'Sanlorenzo_PET', // Use appropriate naming 
+  fileFormat: 'CSV'
+})
