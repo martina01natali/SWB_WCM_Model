@@ -27,8 +27,6 @@ from numpy.polynomial import Polynomial
 from scipy.signal import savgol_filter as sfilter
 
 # Geospatial
-import fiona
-import xarray as xr
 import hydroeval as he
 # import geopandas as gpd
 # from maps_original import *
