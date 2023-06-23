@@ -35,7 +35,7 @@ def search_fname(root, pattern):
     return chosen_file_path
 
 
-def read_json(chosen_file_path:str):->dict
+def read_json(chosen_file_path:str):
 
     data = 0
     if os.path.isfile(chosen_file_path):
