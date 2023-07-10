@@ -71,11 +71,10 @@ def IRR_WCM(PAR, inputs, user_in):
     angle_m = np.mean(angle)
     Ks      = 0. # water stress coefficient
     rho     = 0. # depletion fraction
-    WW      = np.array([.0]*len(t)) # water content [m3/m3]
+    WW      = np.array([.2]*len(t), dtype=float) # water content [m3/m3]
     WW[0]   = WW_obs[0] # initial value of sm [m3/m3]
     depth   = 0. # dynamic depth [mm]
-    sig0    = np.array([.0]*len(t_sat)) # backscattering
-    
+
     COST   = .0   # additional cost to KGE
     LAMBDA = 1000 # Lagrange multiplier
     
@@ -97,10 +96,10 @@ def IRR_WCM(PAR, inputs, user_in):
         elif rho>0.8: COST += (rho-0.8)**2 # regularization
         
         if WW[i-1]>=(1-rho)*WW_fc:
-            Ks=1
+            Ks=1.
         elif (WW[i-1]>WW_w)and(WW[i-1]<(1-rho)*WW_fc):
-            Ks=float(float(WW[i-1]-WW_w)/float((1-rho)*(WW_fc-WW_w)))
-        else: Ks=0
+            Ks=((WW[i-1]-WW_w)/((1-rho)*(WW_fc-WW_w)))
+        else: Ks=0.
         
         # Water balance [mm]
         WW[i]=WW[i-1]+(P[i]+IRR_obs[i]-EPOT[i]*Kc[i]*Kc0*Ks)/(depth)
@@ -111,7 +110,7 @@ def IRR_WCM(PAR, inputs, user_in):
     WWsat = np.array([ x[1] for x in timeseries(t,WW) if x[0] in t_sat ])
     
     # Water Cloud Model
-    sig0,KGE = WCM([A,B,C,D], [WWsat,veg,angle,sig0_obs], units=units)
+    sig0,KGE = WCM([A,B,C,D], [WWsat,veg,angle,sig0_obs])
     
     KGE += -LAMBDA*COST
     

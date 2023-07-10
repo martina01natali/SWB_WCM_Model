@@ -112,7 +112,8 @@ def hist_gauss_fit(data, nbins, hist_kwargs, fitline_kwargs,
 
         popt, pcov = curve_fit(func_fit, bins[:-1], counts,
                                method=fit_method, **kwargs, **options,
-                               maxfev=100000, full_output=False)
+                               maxfev=100000, #full_output=False
+                               )
         fit = func_fit(x, *popt)
         plt.plot(x, fit, label=fit_label+' fit', **fitline_kwargs)
         mode = x[np.argmax(fit)]

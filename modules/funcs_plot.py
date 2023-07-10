@@ -106,13 +106,13 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
                linestyle=linestyle, marker=marker, alpha=.4, zorder=-1)
     ax[0].legend(loc='upper left')
     ax[0].set_title(title)
-    ax[0].set_ylabel(labely+units)
+    ax[0].set_ylabel(labely+units, fontsize=16)
     
     units = r' $[-]$'
     ax1 = ax[0].twinx()
     ax1.plot(times, input1, label=input1_label, color='tab:green')
     ax1.legend(loc='upper right')
-    ax1.set_ylabel(input1_label+units)
+    ax1.set_ylabel(input1_label+units, fontsize=16)
     
     
     #-----------------------------------------------------------------------
@@ -150,11 +150,12 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     
     ax[1].set_xlim(xmin=times[0], xmax=times[-1])
     ax[1].plot(times, sim, c='tab:red', label=sim_label)
-    ax[1].plot(times, obs, c='tab:blue', label=obs_label,
+    ax[1].plot(times, savgol_filter(obs, window_length=36, polyorder=1, mode='mirror'),
+               c='tab:blue', label=obs_label,
                linestyle='-', alpha=.7, zorder=-1)
     ax[1].legend(loc='upper left')
     ax[1].set_title(title)
-    ax[1].set_ylabel(data2_label+units)
+    ax[1].set_ylabel(data2_label+units, fontsize=16)
     
     #-----------------------------------------------------------------------
     # Plot of inputs P, IRR, veg
@@ -166,12 +167,12 @@ def plot_triple(fig, ax, times1:list, data1:list, data1_label:str,
     ax[2].bar(times, data3[0], color='tab:gray', label=label1)
     ax[2].bar(times, data3[1], color='tab:blue', label=label2, zorder=2)
     ax[2].legend(loc='upper left')
-    ax[2].set_ylabel(label1+', '+label2+units)
+    ax[2].set_ylabel(label1+', '+label2+units, fontsize=16)
     
     ax2 = ax[2].twinx()
     ax2.plot(times, data3[2], label=label3, color='tab:green')
     ax2.legend(loc='upper right')
-    ax2.set_ylabel(label3+r' $[mm/h]$')
+    ax2.set_ylabel(label3+r' $[mm/h]$', fontsize=16)
     
     
     
@@ -220,7 +221,7 @@ def plot_sim_vs_obs(sim:list, obs:list, quantity:str, um:str):
     R=np.corrcoef(x,y)[0][1]; print('R=', R, 'R^2=', R**2)
     BIAS=bias(x,y); print('bias=', BIAS)
     
-    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel, fontsize=16)
     xtext=0.2*(max_common-min_common)+min_common
     ytext=0.9*(max_common-min_common)+min_common
     ax.text(xtext, ytext,
