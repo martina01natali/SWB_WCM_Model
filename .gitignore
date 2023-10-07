@@ -5,6 +5,7 @@
 # *Inputs\*
 ./IRRI_WCM/Plot/Archive_gitignored/*
 *Archive*
+conda/
 
 
 # Byte-compiled / optimized / DLL files
