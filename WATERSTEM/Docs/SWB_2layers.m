@@ -30,4 +30,18 @@ QS=IE+SE+SE2;
 
 %Vol_Fin=W+W2+E1+E2+BF+QS;
 
+# -------------------
+depth = depth(S, C, W[i-1])... [mm]
+static theta_sat
+W_max = depth*theta_sat [mm]
+W[i] = W[i-1] + P + I - ET - PERC [mm]
+WW[i] = W[i]/W_max [sat degree] = W[i]/(depth*theta_sat)
+sat_degree -> vol? sat_degree*theta_sat = vol
+
+theta[i] = W[i]/depth [m3m-3]
+
+
+
+
+
 end

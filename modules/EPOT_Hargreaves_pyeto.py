@@ -5,8 +5,8 @@
 import datetime
 import sys
 
-sys.path.append('../')
-from modules.pyeto.pyeto import *
+# sys.path.append('../')
+from pyeto import *
 
 def hargre(lat_deg, dates, temp_min, temp_max, temp_mean):
     """Hargreaves-Samani model for ET0 estimation from temperature input.

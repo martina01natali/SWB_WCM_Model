@@ -19,6 +19,7 @@ import seaborn as sns
 import matplotlib as mplt
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from matplotlib import rc_context
 
 #############################################################################
 # Plotting options (rcParams)
@@ -57,7 +58,7 @@ def timeseries(dates, data):
 # Triple plot
 #############################################################################
 
-@mplt.rc_context(rc_dict)
+# @mplt.rc_context(rc_dict)
 def plot_triple(fig, ax, times1:list, data1:list, data1_label:str, 
                 input1:list, input1_label:str,
                 times2:list, data2:list, data2_label:str,

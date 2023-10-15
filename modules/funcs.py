@@ -62,7 +62,7 @@ def norm_fit(x, a, b):
     
     x = data, a<b
     """
-    return a+(x-np.min(x))*(b-a)/(np.max(x)-np.min(x))
+    return a+(x-np.nanmin(x))*(b-a)/(np.nanmax(x)-np.nanmin(x))
 
 
 def bias(obs, sim):

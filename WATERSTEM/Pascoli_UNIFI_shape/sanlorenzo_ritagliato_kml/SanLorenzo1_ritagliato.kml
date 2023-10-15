@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="SanLorenzo1_ritagliato" id="SanLorenzo1_ritagliato">
+	<SimpleField name="id" type="int"></SimpleField>
+</Schema>
+<Folder><name>SanLorenzo1_ritagliato</name>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#SanLorenzo1_ritagliato">
+		<SimpleData name="id">1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>11.3457662493545,43.9524152488425 11.3450613204228,43.952714215962 11.3441994461327,43.953148906223 11.3448224545455,43.9536235324676 11.3453456095701,43.9541341166484 11.3457038229232,43.9539318817517 11.3461076736689,43.9543068860156 11.3463288300297,43.9545472733642 11.346040881941,43.9547675870308 11.3465596154939,43.95521 11.3482719337269,43.9565814753942 11.3486070112756,43.9564209685489 11.3492252293999,43.9561504065242 11.3466867127211,43.9533569566427 11.3459481789582,43.952547350593 11.3458311414424,43.9523967082459 11.3457662493545,43.9524152488425</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+</Folder>
+</Document></kml>
