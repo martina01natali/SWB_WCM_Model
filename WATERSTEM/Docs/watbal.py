@@ -35,7 +35,8 @@ def singleLayerSWB(w1, int_pio, et0):
     return w2
 
 
-def 2layerSWB(PIO, EPOT, SWE, W, W2, Ks, m2, Ks2, m22, W_max, W_max2, alpha):
+def DoubleLayerSWB(PIO, EPOT, SWE, W, W2, Ks, m2, Ks2, m22, W_max, W_max2,
+                 alpha):
     """soil water balance over 2 layers
 
     """
